@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/user_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/user_name_text_view"
+        android:layout_below="@id/user_image_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Primary.Header"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/user_nick_text_view"
+        android:layout_below="@id/user_name_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Secondary"
+        android:text="Nick" />
+
+    <TextView
+        android:id="@+id/user_description_text_view"
+        android:layout_below="@id/user_nick_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Primary"
+        android:text="Description" />
+
+    <TextView
+        android:id="@+id/user_location_icon_text_view"
+        android:layout_below="@id/user_description_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        android:layout_alignBaseline="@id/user_location_text_view"
+        style="@style/TextIcon"
+        android:text="@string/fa_map_marker" />
+
+    <TextView
+        android:id="@+id/user_location_text_view"
+        android:layout_below="@id/user_description_text_view"
+        android:layout_toEndOf="@id/user_location_icon_text_view"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Secondary"
+        android:text="Location" />
+
+    <TextView
+        android:id="@+id/following_count_text_view"
+        android:layout_below="@id/user_location_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Primary.Bold"
+        android:text="4" />
+
+    <TextView
+        android:id="@+id/following_text_view"
+        android:layout_below="@id/user_location_text_view"
+        android:layout_toEndOf="@id/following_count_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        android:layout_marginStart="5dp"
+        style="@style/TextView.Secondary"
+        android:text="@string/following_hint" />
+
+    <TextView
+        android:id="@+id/followers_count_text_view"
+        android:layout_below="@id/user_location_text_view"
+        android:layout_toEndOf="@id/following_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Primary.Bold"
+        android:layout_marginStart="20dp"
+        android:text="27" />
+
+    <TextView
+        android:id="@+id/followers_text_view"
+        android:layout_below="@id/user_location_text_view"
+        android:layout_toEndOf="@id/followers_count_text_view"
+        android:layout_marginTop="@dimen/text_small_margin"
+        style="@style/TextView.Secondary"
+        android:layout_marginStart="5dp"
+        android:text="@string/followers_hint" />
+
+
+</RelativeLayout>
