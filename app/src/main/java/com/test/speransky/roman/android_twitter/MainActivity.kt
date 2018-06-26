@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         userImageView = findViewById(R.id.user_image_view)
 
         Picasso
-                .with(this)
+                .get()
                 .load("http://i.imgur.com/DvpvklR.png")
                 .into(userImageView)
     }
