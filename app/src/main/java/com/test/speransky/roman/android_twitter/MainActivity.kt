@@ -2,21 +2,95 @@ package com.test.speransky.roman.android_twitter
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
+import android.widget.TextView
 import com.squareup.picasso.Picasso
+import com.test.speransky.roman.android_twitter.adapter.TweetAdapter
+import com.test.speransky.roman.android_twitter.pojo.User
+import com.test.speransky.roman.android_twitter.pojo.Tweet
+import java.util.Arrays.asList
 
 class MainActivity : AppCompatActivity() {
     lateinit var userImageView: ImageView
+    lateinit var nameTextView: TextView
+    lateinit var nickTextView: TextView
+    lateinit var descriptionTextView: TextView
+    lateinit var locationTextView: TextView
+    lateinit var followingCountTextView: TextView
+    lateinit var followersCountTextView: TextView
+
+    lateinit var tweetsRecyclerView: RecyclerView
+
+    lateinit var tweetAdapter: TweetAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         userImageView = findViewById(R.id.user_image_view)
+        nameTextView = findViewById(R.id.user_name_text_view)
+        nickTextView = findViewById(R.id.user_nick_text_view)
+        descriptionTextView = findViewById(R.id.user_description_text_view)
+        locationTextView = findViewById(R.id.user_location_text_view)
+        followingCountTextView = findViewById(R.id.following_count_text_view)
+        followersCountTextView = findViewById(R.id.followers_count_text_view)
 
-        Picasso
-                .get()
-                .load("http://i.imgur.com/DvpvklR.png")
-                .into(userImageView)
+        loadUserInfo()
+        initRecyclerView()
+        loadTweets()
+    }
+
+    private fun displayUserInfo(user: User) {
+        Picasso.get().load(user.imageUrl).into(userImageView)
+        nameTextView.text = user.name
+        nickTextView.text = user.nick
+        descriptionTextView.text = user.description
+        locationTextView.text = user.location
+        followingCountTextView.text = user.followingCount.toString()
+        followersCountTextView.text = user.followersCount.toString()
+    }
+
+    private fun getUser() = User(
+            id = 1L,
+            imageUrl = "http://i.imgur.com/DvpvklR.png",
+            name = "DevColibri",
+            nick = "@devcolibri",
+            description = "Sample description",
+            location = "USA",
+            followingCount = 42,
+            followersCount = 42
+    )
+
+    private fun loadUserInfo() {
+        val user: User = getUser()
+        displayUserInfo(user)
+    }
+
+    private fun initRecyclerView() {
+        tweetsRecyclerView = findViewById(R.id.tweets_recycler_view)
+        tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        tweetAdapter = TweetAdapter()
+        tweetsRecyclerView.adapter = tweetAdapter
+    }
+
+    private fun loadTweets() {
+        val tweets = getTweets()
+        tweetAdapter.setItems(tweets)
+    }
+
+    private fun getTweets(): Collection<Tweet> {
+        return asList(
+                Tweet(getUser(), 1L, "Thu Dec 13 07:31:08 +0000 2017", "Очень длинное описание твита 1",
+                        4L, 4L, "https://www.w3schools.com/w3css/img_fjords.jpg"),
+
+                Tweet(getUser(), 2L, "Thu Dec 12 07:31:08 +0000 2017", "Очень длинное описание твита 2",
+                        5L, 5L, "https://www.w3schools.com/w3images/lights.jpg"),
+
+                Tweet(getUser(), 3L, "Thu Dec 11 07:31:08 +0000 2017", "Очень длинное описание твита 3",
+                        6L, 6L, "https://www.w3schools.com/css/img_mountains.jpg")
+        )
     }
 }
