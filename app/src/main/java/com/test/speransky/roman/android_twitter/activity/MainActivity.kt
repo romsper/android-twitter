@@ -1,18 +1,25 @@
-package com.test.speransky.roman.android_twitter
+package com.test.speransky.roman.android_twitter.activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
+import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.adapter.TweetAdapter
 import com.test.speransky.roman.android_twitter.pojo.User
 import com.test.speransky.roman.android_twitter.pojo.Tweet
 import java.util.Arrays.asList
 
 class MainActivity : AppCompatActivity() {
+    lateinit var toolBar: Toolbar
+
     lateinit var userImageView: ImageView
     lateinit var nameTextView: TextView
     lateinit var nickTextView: TextView
@@ -22,12 +29,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var followersCountTextView: TextView
 
     lateinit var tweetsRecyclerView: RecyclerView
-
     lateinit var tweetAdapter: TweetAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        toolBar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolBar)
 
         userImageView = findViewById(R.id.user_image_view)
         nameTextView = findViewById(R.id.user_name_text_view)
@@ -40,9 +49,25 @@ class MainActivity : AppCompatActivity() {
         loadUserInfo()
         initRecyclerView()
         loadTweets()
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.user_info_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_search) {
+            val intent = Intent(this, SearchUsersActivity::class.java)
+            startActivity(intent)
+        }
+        return true
     }
 
     private fun displayUserInfo(user: User) {
+        supportActionBar?.title = user.name
+
         Picasso.get().load(user.imageUrl).into(userImageView)
         nameTextView.text = user.name
         nickTextView.text = user.nick

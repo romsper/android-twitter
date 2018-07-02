@@ -13,23 +13,20 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
     private val tweetList = ArrayList<Tweet>()
     private val TWITTER_RESPONSE_FORMAT = "EEE MMM dd HH:mm:ss ZZZZZ yyyy"
     private val MONTH_DAY_FORMAT = "MMM d"
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TweetViewHolder {
+    override fun getItemCount() = tweetList.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
         val view = LayoutInflater.from(parent!!.context)
                 .inflate(R.layout.tweet_item_view, parent, false)
         return TweetViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return tweetList.size
-    }
-
-    override fun onBindViewHolder(holder: TweetViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
         holder!!.bind(tweetList[position])
     }
 
@@ -43,8 +40,7 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class TweetViewHolder
-    (itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TweetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val userImageView: ImageView = itemView.findViewById(R.id.profile_image_view)
         private val nameTextView: TextView = itemView.findViewById(R.id.author_name_text_view)
         private val nickTextView: TextView = itemView.findViewById(R.id.author_nick_text_view)
