@@ -7,10 +7,10 @@ import android.support.v7.widget.RecyclerView
 import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.adapter.UsersAdapter
 import com.test.speransky.roman.android_twitter.pojo.User
+import android.content.Intent
 
 class SearchUsersActivity : AppCompatActivity() {
     private lateinit var usersRecyclerView: RecyclerView
-
     private lateinit var usersAdapter: UsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,15 @@ class SearchUsersActivity : AppCompatActivity() {
         usersRecyclerView = findViewById(R.id.users_recycler_view)
         usersRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        usersAdapter = UsersAdapter()
+        val onUserClickListener = object : UsersAdapter.OnUserClickListener {
+            override fun onUserClick(user: User) {
+                val intent = Intent(this@SearchUsersActivity, MainActivity::class.java)
+                intent.putExtra(MainActivity().USER_ID, user.id)
+                startActivity(intent)
+            }
+        }
+
+        usersAdapter = UsersAdapter(onUserClickListener)
         usersRecyclerView.adapter = usersAdapter
     }
 

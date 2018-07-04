@@ -18,6 +18,8 @@ import com.test.speransky.roman.android_twitter.pojo.Tweet
 import java.util.Arrays.asList
 
 class MainActivity : AppCompatActivity() {
+    val USER_ID: String = "userId"
+
     lateinit var toolBar: Toolbar
 
     lateinit var userImageView: ImageView
