@@ -8,17 +8,56 @@ import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.adapter.UsersAdapter
 import com.test.speransky.roman.android_twitter.pojo.User
 import android.content.Intent
+import android.support.v7.widget.Toolbar
+import android.view.MenuItem
+import android.widget.Button
+import android.widget.EditText
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+
+
 
 class SearchUsersActivity : AppCompatActivity() {
+    private lateinit var toolbar: Toolbar
+    private lateinit var queryEditText: EditText
+    private lateinit var searchButton: Button
+
     private lateinit var usersRecyclerView: RecyclerView
     private lateinit var usersAdapter: UsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_users)
-
         initRecyclerView()
+
+        toolbar = findViewById(R.id.toolbar)
+        queryEditText = toolbar.findViewById(R.id.query_edit_text)
+        searchButton = toolbar.findViewById(R.id.search_button)
+
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         searchUsers()
+
+        searchButton.setOnClickListener { searchUsers() }
+
+        queryEditText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchUsers()
+                return@OnEditorActionListener true
+            }
+            false })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
@@ -39,6 +78,7 @@ class SearchUsersActivity : AppCompatActivity() {
 
     private fun searchUsers() {
         val users = getUsers()
+        usersAdapter.clearItems()
         usersAdapter.setItems(users)
     }
 
