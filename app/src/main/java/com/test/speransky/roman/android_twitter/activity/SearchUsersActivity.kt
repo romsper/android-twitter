@@ -37,8 +37,6 @@ class SearchUsersActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        searchUsers()
-
         searchButton.setOnClickListener { searchUsers() }
 
         queryEditText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
@@ -66,8 +64,8 @@ class SearchUsersActivity : AppCompatActivity() {
 
         val onUserClickListener = object : UsersAdapter.OnUserClickListener {
             override fun onUserClick(user: User) {
-                val intent = Intent(this@SearchUsersActivity, MainActivity::class.java)
-                intent.putExtra(MainActivity().USER_ID, user.id)
+                val intent = Intent(this@SearchUsersActivity, UserInfoActivity::class.java)
+                intent.putExtra(UserInfoActivity().USER_ID, user.id)
                 startActivity(intent)
             }
         }

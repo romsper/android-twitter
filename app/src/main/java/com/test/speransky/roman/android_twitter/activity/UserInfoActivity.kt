@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.adapter.TweetAdapter
@@ -17,7 +18,7 @@ import com.test.speransky.roman.android_twitter.pojo.User
 import com.test.speransky.roman.android_twitter.pojo.Tweet
 import java.util.Arrays.asList
 
-class MainActivity : AppCompatActivity() {
+class UserInfoActivity : AppCompatActivity() {
     val USER_ID: String = "userId"
 
     lateinit var toolBar: Toolbar
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         toolBar = findViewById(R.id.toolbar)
         setSupportActionBar(toolBar)
+
+        val userId: Long = intent.getLongExtra(USER_ID, -1)
+        Toast.makeText(this, "UserId - $userId", Toast.LENGTH_SHORT).show()
 
         userImageView = findViewById(R.id.user_image_view)
         nameTextView = findViewById(R.id.user_name_text_view)
