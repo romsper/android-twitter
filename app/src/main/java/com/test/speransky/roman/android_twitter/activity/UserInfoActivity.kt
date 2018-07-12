@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -14,12 +15,16 @@ import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.adapter.TweetAdapter
+import com.test.speransky.roman.android_twitter.network.HttpClient
 import com.test.speransky.roman.android_twitter.pojo.User
 import com.test.speransky.roman.android_twitter.pojo.Tweet
+import java.io.IOException
 import java.util.Arrays.asList
 
 class UserInfoActivity : AppCompatActivity() {
     val USER_ID: String = "userId"
+
+    lateinit var httpClient: HttpClient
 
     lateinit var toolBar: Toolbar
 
@@ -52,10 +57,12 @@ class UserInfoActivity : AppCompatActivity() {
         followingCountTextView = findViewById(R.id.following_count_text_view)
         followersCountTextView = findViewById(R.id.followers_count_text_view)
 
-        loadUserInfo()
         initRecyclerView()
-        loadTweets()
 
+        httpClient = HttpClient()
+        loadUserInfo(userId)
+
+        loadTweets()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -94,9 +101,17 @@ class UserInfoActivity : AppCompatActivity() {
             followersCount = 42
     )
 
-    private fun loadUserInfo() {
-        val user: User = getUser()
-        displayUserInfo(user)
+    private fun loadUserInfo(userId: Long) {
+        val readUserRunnable = Runnable {
+            try {
+                val userInfo = httpClient.readUserInfo(userId)
+                Log.d("HttpTest", userInfo)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+
+        Thread(readUserRunnable).start()
     }
 
     private fun initRecyclerView() {
