@@ -20,6 +20,10 @@ import com.test.speransky.roman.android_twitter.pojo.User
 import com.test.speransky.roman.android_twitter.pojo.Tweet
 import java.io.IOException
 import java.util.Arrays.asList
+import android.os.AsyncTask
+import android.annotation.SuppressLint
+
+
 
 class UserInfoActivity : AppCompatActivity() {
     val USER_ID: String = "userId"
@@ -43,9 +47,6 @@ class UserInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolBar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolBar)
-
         val userId: Long = intent.getLongExtra(USER_ID, -1)
         Toast.makeText(this, "UserId - $userId", Toast.LENGTH_SHORT).show()
 
@@ -56,6 +57,8 @@ class UserInfoActivity : AppCompatActivity() {
         locationTextView = findViewById(R.id.user_location_text_view)
         followingCountTextView = findViewById(R.id.following_count_text_view)
         followersCountTextView = findViewById(R.id.followers_count_text_view)
+        toolBar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolBar)
 
         initRecyclerView()
 
@@ -76,6 +79,55 @@ class UserInfoActivity : AppCompatActivity() {
             startActivity(intent)
         }
         return true
+    }
+
+    private fun loadTweets() {
+        val tweets = getTweets()
+        tweetAdapter.setItems(tweets)
+    }
+
+    private fun getTweets(): Collection<Tweet> {
+        return asList(
+                Tweet(getUser(), 1L, "Thu Dec 13 07:31:08 +0000 2017", "Очень длинное описание твита 1",
+                        4L, 4L, "https://www.w3schools.com/w3css/img_fjords.jpg"),
+
+                Tweet(getUser(), 2L, "Thu Dec 12 07:31:08 +0000 2017", "Очень длинное описание твита 2",
+                        5L, 5L, "https://www.w3schools.com/w3images/lights.jpg"),
+
+                Tweet(getUser(), 3L, "Thu Dec 11 07:31:08 +0000 2017", "Очень длинное описание твита 3",
+                        6L, 6L, "https://www.w3schools.com/css/img_mountains.jpg")
+        )
+    }
+
+    private fun initRecyclerView() {
+        tweetsRecyclerView = findViewById(R.id.tweets_recycler_view)
+        tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        tweetAdapter = TweetAdapter()
+        tweetsRecyclerView.adapter = tweetAdapter
+    }
+
+    private fun loadUserInfo(userId: Long) {
+        UserInfoAsyncTask().execute(userId)
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private inner class UserInfoAsyncTask : AsyncTask<Long, Int, String>() {
+
+         override fun doInBackground(vararg p0: Long?): String? {
+             return try {
+                 val userId = p0[0]
+                 httpClient.readUserInfo(userId!!)
+
+             } catch (e: IOException) {
+                 e.printStackTrace()
+                 null
+             }
+        }
+
+        override fun onPostExecute(result: String) {
+            Log.d("HttpTest", result)
+        }
     }
 
     private fun displayUserInfo(user: User) {
@@ -100,43 +152,4 @@ class UserInfoActivity : AppCompatActivity() {
             followingCount = 42,
             followersCount = 42
     )
-
-    private fun loadUserInfo(userId: Long) {
-        val readUserRunnable = Runnable {
-            try {
-                val userInfo = httpClient.readUserInfo(userId)
-                Log.d("HttpTest", userInfo)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-
-        Thread(readUserRunnable).start()
-    }
-
-    private fun initRecyclerView() {
-        tweetsRecyclerView = findViewById(R.id.tweets_recycler_view)
-        tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        tweetAdapter = TweetAdapter()
-        tweetsRecyclerView.adapter = tweetAdapter
-    }
-
-    private fun loadTweets() {
-        val tweets = getTweets()
-        tweetAdapter.setItems(tweets)
-    }
-
-    private fun getTweets(): Collection<Tweet> {
-        return asList(
-                Tweet(getUser(), 1L, "Thu Dec 13 07:31:08 +0000 2017", "Очень длинное описание твита 1",
-                        4L, 4L, "https://www.w3schools.com/w3css/img_fjords.jpg"),
-
-                Tweet(getUser(), 2L, "Thu Dec 12 07:31:08 +0000 2017", "Очень длинное описание твита 2",
-                        5L, 5L, "https://www.w3schools.com/w3images/lights.jpg"),
-
-                Tweet(getUser(), 3L, "Thu Dec 11 07:31:08 +0000 2017", "Очень длинное описание твита 3",
-                        6L, 6L, "https://www.w3schools.com/css/img_mountains.jpg")
-        )
-    }
 }

@@ -39,14 +39,14 @@ class HttpClient {
 
     @Throws(IOException::class)
     private fun convertStreamToString(stream: InputStream): String {
-
         val reader = BufferedReader(InputStreamReader(stream))
         val sb = StringBuilder()
         var line = reader.readLine()
 
-        while (line != null) sb.append(line).append("\n")
-        stream.close()
-
+        when(line != null) {
+            true -> { sb.append(line).append("\n"); }
+            else -> stream.close()
+        }
         return sb.toString()
     }
 
