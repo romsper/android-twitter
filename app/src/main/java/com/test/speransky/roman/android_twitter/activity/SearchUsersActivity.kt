@@ -15,8 +15,6 @@ import android.widget.EditText
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 
-
-
 class SearchUsersActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
     private lateinit var queryEditText: EditText
@@ -84,22 +82,22 @@ class SearchUsersActivity : AppCompatActivity() {
         return listOf(
                 User(
                         id = 1L,
-                        imageUrl = "http://i.imgur.com/DvpvklR.png",
+                        profileImageUrl = "http://i.imgur.com/DvpvklR.png",
                         name = "DevColibri",
-                        nick = "@devcolibri",
+                        screenName = "@devcolibri",
                         description = "Sample description",
                         location = "USA",
-                        followingCount = 42,
+                        favouritesCount = 42,
                         followersCount = 42
                 ),
                 User(
                         id = 44196397L,
-                        imageUrl = "https://pbs.twimg.com/profile_images/782474226020200448/zDo-gAo0_400x400.jpg",
+                        profileImageUrl = "https://pbs.twimg.com/profile_images/782474226020200448/zDo-gAo0_400x400.jpg",
                         name = "Elon Musk",
-                        nick = "@elonmusk",
+                        screenName = "@elonmusk",
                         description = "Hat Salesman",
                         location = "Boring",
-                        followingCount = 14,
+                        favouritesCount = 14,
                         followersCount = 13
                 )
         )

@@ -1,5 +1,6 @@
 package com.test.speransky.roman.android_twitter.network
 
+import com.test.speransky.roman.android_twitter.pojo.User
 import java.net.HttpURLConnection
 import java.net.URL
 import com.twitter.sdk.android.core.internal.oauth.OAuth1aHeaders
@@ -13,9 +14,10 @@ import java.io.InputStreamReader
 
 class HttpClient {
     private val GET = "GET"
+    private val jsonParser = JsonParser()
 
     @Throws(IOException::class)
-    fun readUserInfo(userId: Long): String {
+    fun readUserInfo(userId: Long): User {
         var requestUrl = "https://api.twitter.com/1.1/users/show.json?user_id=$userId"
 
         val url = URL(requestUrl)
@@ -33,8 +35,9 @@ class HttpClient {
             connection.inputStream
         }
 
-        return convertStreamToString(input)
+        val respone = convertStreamToString(input)
 
+        return jsonParser.getUser(respone)
     }
 
     @Throws(IOException::class)

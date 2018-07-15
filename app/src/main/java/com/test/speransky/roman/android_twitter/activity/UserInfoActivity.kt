@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -22,7 +21,7 @@ import java.io.IOException
 import java.util.Arrays.asList
 import android.os.AsyncTask
 import android.annotation.SuppressLint
-
+import org.json.JSONException
 
 
 class UserInfoActivity : AppCompatActivity() {
@@ -112,44 +111,47 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class UserInfoAsyncTask : AsyncTask<Long, Int, String>() {
+    private inner class UserInfoAsyncTask : AsyncTask<Long, Int, User>() {
 
-         override fun doInBackground(vararg p0: Long?): String? {
-             return try {
-                 val userId = p0[0]
-                 httpClient.readUserInfo(userId!!)
-
-             } catch (e: IOException) {
-                 e.printStackTrace()
-                 null
-             }
+        override fun doInBackground(vararg p0: Long?): User? {
+            return try {
+                val userId = p0[0]
+                httpClient.readUserInfo(userId!!)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                null
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                null
+            }
         }
 
-        override fun onPostExecute(result: String) {
-            Log.d("HttpTest", result)
+        override fun onPostExecute(user: User) {
+            displayUserInfo(user)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun displayUserInfo(user: User) {
         supportActionBar?.title = user.name
 
-        Picasso.get().load(user.imageUrl).into(userImageView)
+        Picasso.get().load(user.profileImageUrl).into(userImageView)
         nameTextView.text = user.name
-        nickTextView.text = user.nick
+        nickTextView.text = "@${user.screenName}"
         descriptionTextView.text = user.description
         locationTextView.text = user.location
-        followingCountTextView.text = user.followingCount.toString()
+        followingCountTextView.text = user.favouritesCount.toString()
         followersCountTextView.text = user.followersCount.toString()
     }
 
     private fun getUser() = User(
             id = 1L,
-            imageUrl = "http://i.imgur.com/DvpvklR.png",
+            profileImageUrl = "http://i.imgur.com/DvpvklR.png",
             name = "DevColibri",
-            nick = "@devcolibri",
+            screenName = "@devcolibri",
             description = "Sample description",
             location = "USA",
-            followingCount = 42,
+            favouritesCount = 42,
             followersCount = 42
     )
 }

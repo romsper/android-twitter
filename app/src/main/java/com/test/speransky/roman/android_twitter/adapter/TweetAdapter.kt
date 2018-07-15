@@ -21,13 +21,13 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
     override fun getItemCount() = tweetList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
-        val view = LayoutInflater.from(parent!!.context)
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.tweet_item_view, parent, false)
         return TweetViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
-        holder!!.bind(tweetList[position])
+        holder.bind(tweetList[position])
     }
 
     fun setItems(tweets: Collection<Tweet>) {
@@ -52,7 +52,7 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
 
         fun bind(tweet: Tweet) {
             nameTextView.text = tweet.user.name
-            nickTextView.text = tweet.user.nick
+            nickTextView.text = tweet.user.screenName
             contentTextView.text = tweet.text
             retweetsTextView.text = tweet.retweetCount.toString()
             likesTextView.text = tweet.favoriteCount.toString()
@@ -60,7 +60,7 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
             val creationDateFormatted = getFormattedDate(tweet.creationDate)
             creationDateTextView.text = creationDateFormatted
 
-            Picasso.get().load(tweet.user.imageUrl).into(userImageView)
+            Picasso.get().load(tweet.user.profileImageUrl).into(userImageView)
 
             val tweetPhotoUrl = tweet.imageUrl
             Picasso.get().load(tweetPhotoUrl).into(tweetImageView)

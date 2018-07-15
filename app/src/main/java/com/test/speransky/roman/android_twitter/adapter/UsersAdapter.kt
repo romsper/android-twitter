@@ -10,22 +10,17 @@ import com.squareup.picasso.Picasso
 import com.test.speransky.roman.android_twitter.R
 import com.test.speransky.roman.android_twitter.pojo.User
 
-class UsersAdapter(onUserClickListener: OnUserClickListener) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private var onUserClickListener: OnUserClickListener) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
     private val userList = ArrayList<User>()
-    private lateinit var onUserClickListener: OnUserClickListener
-
-    init {
-            this.onUserClickListener = onUserClickListener
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val view = LayoutInflater.from(parent!!.context)
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.user_item_view, parent, false)
         return UserViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder!!.bind(userList[position])
+        holder.bind(userList[position])
     }
 
     override fun getItemCount() = userList.size
@@ -53,9 +48,9 @@ class UsersAdapter(onUserClickListener: OnUserClickListener) : RecyclerView.Adap
         }
 
         fun bind(user: User) {
-            Picasso.get().load(user.imageUrl).into(userImageView)
+            Picasso.get().load(user.profileImageUrl).into(userImageView)
             nameTextView.text = user.name
-            nickTextView.text = user.nick
+            nickTextView.text = user.screenName
         }
     }
 
