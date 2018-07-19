@@ -63,8 +63,7 @@ class UserInfoActivity : AppCompatActivity() {
 
         httpClient = HttpClient()
         loadUserInfo(userId)
-
-        loadTweets()
+        loadTweets(userId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -80,24 +79,6 @@ class UserInfoActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadTweets() {
-        val tweets = getTweets()
-        tweetAdapter.setItems(tweets)
-    }
-
-    private fun getTweets(): Collection<Tweet> {
-        return asList(
-                Tweet(getUser(), 1L, "Thu Dec 13 07:31:08 +0000 2017", "Очень длинное описание твита 1",
-                        4L, 4L, "https://www.w3schools.com/w3css/img_fjords.jpg"),
-
-                Tweet(getUser(), 2L, "Thu Dec 12 07:31:08 +0000 2017", "Очень длинное описание твита 2",
-                        5L, 5L, "https://www.w3schools.com/w3images/lights.jpg"),
-
-                Tweet(getUser(), 3L, "Thu Dec 11 07:31:08 +0000 2017", "Очень длинное описание твита 3",
-                        6L, 6L, "https://www.w3schools.com/css/img_mountains.jpg")
-        )
-    }
-
     private fun initRecyclerView() {
         tweetsRecyclerView = findViewById(R.id.tweets_recycler_view)
         tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -108,6 +89,33 @@ class UserInfoActivity : AppCompatActivity() {
 
     private fun loadUserInfo(userId: Long) {
         UserInfoAsyncTask().execute(userId)
+    }
+
+    private fun loadTweets(userId: Long) {
+        TweetsAsyncTask().execute(userId)
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private inner class TweetsAsyncTask : AsyncTask<Long, Int, Collection<Tweet>>() {
+
+         override fun doInBackground(vararg p0: Long?): Collection<Tweet>? {
+             return try {
+                 val userId = p0[0]
+                 httpClient.readTweets(userId!!)
+
+             } catch (e: IOException) {
+                 e.printStackTrace()
+                 null
+             } catch (e: JSONException) {
+                 e.printStackTrace()
+                 null
+             }
+
+        }
+
+        override fun onPostExecute(tweets: Collection<Tweet>) {
+            tweetAdapter.setItems(tweets)
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -143,15 +151,4 @@ class UserInfoActivity : AppCompatActivity() {
         followingCountTextView.text = user.favouritesCount.toString()
         followersCountTextView.text = user.followersCount.toString()
     }
-
-    private fun getUser() = User(
-            id = 1L,
-            profileImageUrl = "http://i.imgur.com/DvpvklR.png",
-            name = "DevColibri",
-            screenName = "@devcolibri",
-            description = "Sample description",
-            location = "USA",
-            favouritesCount = 42,
-            followersCount = 42
-    )
 }
