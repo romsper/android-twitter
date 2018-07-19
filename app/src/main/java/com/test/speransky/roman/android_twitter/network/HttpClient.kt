@@ -34,6 +34,13 @@ class HttpClient {
         return jsonParser.getUser(response)
     }
 
+    fun readUsers(query: String): Collection<User> {
+        val requestUrl = "https://api.twitter.com/1.1/users/search.json?q=$query"
+        val encodedUrl = requestUrl.replace(" ", "%20")
+        val response = getResponse(encodedUrl)
+        return jsonParser.getUsers(response)
+    }
+
     @Throws(IOException::class)
     private fun getResponse(requestUrl: String): String {
         val url = URL(requestUrl)

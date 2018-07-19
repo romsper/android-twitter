@@ -11,6 +11,8 @@ import org.json.JSONObject
 
 class JsonParser {
 
+    //---USER---
+
     @Throws(JSONException::class)
     fun getUser(response: String): User {
         val userJson = JSONObject(response)
@@ -30,6 +32,8 @@ class JsonParser {
 
         return User(id = id, profileImageUrl = imageUrl, name = name, screenName = nick, description = description, location = location, followersCount = followingCount, favouritesCount = followersCount)
     }
+
+    //--TWEETS---
 
     @Throws(JSONException::class)
     fun getTweets(response: String): Collection<Tweet> {
@@ -62,5 +66,20 @@ class JsonParser {
         val mediaArray = if (entities.has("media")) entities.getJSONArray("media") else null
         val firstMedia = mediaArray?.getJSONObject(0)
         return firstMedia?.getString("media_url")
+    }
+
+    //---USERS---
+
+    fun getUsers(response: String): Collection<User> {
+        val jsonArray = JSONArray(response)
+        val usersResult = ArrayList<User>()
+
+        for (i in 0 until jsonArray.length()) {
+            val userJson = jsonArray.getJSONObject(i)
+            val user = getUser(userJson)
+            usersResult.add(user)
+        }
+
+        return usersResult
     }
 }

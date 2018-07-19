@@ -14,8 +14,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import com.test.speransky.roman.android_twitter.network.HttpClient
+import android.os.AsyncTask
+import android.annotation.SuppressLint
+import android.widget.Toast
+import org.json.JSONException
+import java.io.IOException
+
 
 class SearchUsersActivity : AppCompatActivity() {
+    lateinit var httpClient: HttpClient
+
     private lateinit var toolbar: Toolbar
     private lateinit var queryEditText: EditText
     private lateinit var searchButton: Button
@@ -34,6 +43,8 @@ class SearchUsersActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        httpClient = HttpClient()
 
         searchButton.setOnClickListener { searchUsers() }
 
@@ -72,34 +83,34 @@ class SearchUsersActivity : AppCompatActivity() {
         usersRecyclerView.adapter = usersAdapter
     }
 
+    @SuppressLint("StaticFieldLeak")
     private fun searchUsers() {
-        val users = getUsers()
-        usersAdapter.clearItems()
-        usersAdapter.setItems(users)
+        val query = queryEditText.text.toString()
+        if(query.isEmpty()) {
+            Toast.makeText(this@SearchUsersActivity, R.string.not_enough_symbols_msg, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        UsersAsyncTask().execute(query)
     }
 
-    private fun getUsers() : Collection<User> {
-        return listOf(
-                User(
-                        id = 1L,
-                        profileImageUrl = "http://i.imgur.com/DvpvklR.png",
-                        name = "DevColibri",
-                        screenName = "@devcolibri",
-                        description = "Sample description",
-                        location = "USA",
-                        favouritesCount = 42,
-                        followersCount = 42
-                ),
-                User(
-                        id = 44196397L,
-                        profileImageUrl = "https://pbs.twimg.com/profile_images/782474226020200448/zDo-gAo0_400x400.jpg",
-                        name = "Elon Musk",
-                        screenName = "@elonmusk",
-                        description = "Hat Salesman",
-                        location = "Boring",
-                        favouritesCount = 14,
-                        followersCount = 13
-                )
-        )
+    @SuppressLint("StaticFieldLeak")
+    private inner class UsersAsyncTask : AsyncTask<String, Int, Collection<User>>() {
+        override fun doInBackground(vararg params: String): Collection<User>? {
+            val query = params[0]
+            return try {
+                httpClient.readUsers(query)
+            } catch (e: IOException) {
+                null
+            } catch (e: JSONException) {
+                null
+            }
+
+        }
+
+        override fun onPostExecute(users: Collection<User>) {
+            usersAdapter.clearItems()
+            usersAdapter.setItems(users)
+        }
     }
 }
