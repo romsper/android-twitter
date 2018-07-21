@@ -119,12 +119,12 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class UserInfoAsyncTask : AsyncTask<Long, Int, User>() {
+    private inner class UserInfoAsyncTask : AsyncTask<Long, Int, User?>() {
 
         override fun doInBackground(vararg p0: Long?): User? {
             return try {
                 val userId = p0[0]
-                httpClient.readUserInfo(userId!!)
+                httpClient.readUserInfo(userId)
             } catch (e: IOException) {
                 e.printStackTrace()
                 null
@@ -134,8 +134,13 @@ class UserInfoActivity : AppCompatActivity() {
             }
         }
 
-        override fun onPostExecute(user: User) {
-            displayUserInfo(user)
+        override fun onPostExecute(user: User?) {
+            if(user != null) {
+                displayUserInfo(user)
+            }
+            else {
+                Toast.makeText(this@UserInfoActivity, R.string.loading_error_msg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -13,7 +13,6 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-
 class HttpClient {
     private val GET = "GET"
     private val jsonParser = JsonParser()
@@ -28,7 +27,7 @@ class HttpClient {
     }
 
     @Throws(IOException::class, JSONException::class)
-    fun readUserInfo(userId: Long): User {
+    fun readUserInfo(userId: Long?): User? {
         val requestUrl = "https://api.twitter.com/1.1/users/show.json?user_id=$userId"
         val response = getResponse(requestUrl)
         return jsonParser.getUser(response)
