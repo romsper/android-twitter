@@ -21,15 +21,23 @@ import java.io.IOException
 import java.util.Arrays.asList
 import android.os.AsyncTask
 import android.annotation.SuppressLint
+import android.support.v4.view.ViewCompat
+import android.support.v7.widget.DividerItemDecoration
 import org.json.JSONException
+import android.support.v4.widget.SwipeRefreshLayout
+
+
 
 
 class UserInfoActivity : AppCompatActivity() {
     val USER_ID: String = "userId"
+    var taskInProgressCount = 0
 
     lateinit var httpClient: HttpClient
 
     lateinit var toolBar: Toolbar
+
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     lateinit var userImageView: ImageView
     lateinit var nameTextView: TextView
@@ -46,7 +54,7 @@ class UserInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val userId: Long = intent.getLongExtra(USER_ID, -1)
+        val userId: Long = intent.getLongExtra(USER_ID, -1);
         Toast.makeText(this, "UserId - $userId", Toast.LENGTH_SHORT).show()
 
         userImageView = findViewById(R.id.user_image_view)
@@ -56,12 +64,19 @@ class UserInfoActivity : AppCompatActivity() {
         locationTextView = findViewById(R.id.user_location_text_view)
         followingCountTextView = findViewById(R.id.following_count_text_view)
         followersCountTextView = findViewById(R.id.followers_count_text_view)
+
         toolBar = findViewById(R.id.toolbar)
         setSupportActionBar(toolBar)
+        httpClient = HttpClient()
+
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+        swipeRefreshLayout.setOnRefreshListener {
+            tweetAdapter.clearItems()
+            loadUserInfo(userId)
+            loadTweets(userId)
+        }
 
         initRecyclerView()
-
-        httpClient = HttpClient()
         loadUserInfo(userId)
         loadTweets(userId)
     }
@@ -81,8 +96,11 @@ class UserInfoActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         tweetsRecyclerView = findViewById(R.id.tweets_recycler_view)
-        tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
 
+        ViewCompat.setNestedScrollingEnabled(tweetsRecyclerView, false)
+        tweetsRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        tweetsRecyclerView.layoutManager = LinearLayoutManager(this)
         tweetAdapter = TweetAdapter()
         tweetsRecyclerView.adapter = tweetAdapter
     }
@@ -95,8 +113,22 @@ class UserInfoActivity : AppCompatActivity() {
         TweetsAsyncTask().execute(userId)
     }
 
+    private fun setRefreshLayoutVisible(visible: Boolean) {
+        if (visible) {
+            taskInProgressCount++
+            if (taskInProgressCount == 1) swipeRefreshLayout.isRefreshing = true
+        } else {
+            taskInProgressCount--
+            if (taskInProgressCount == 0) swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     private inner class TweetsAsyncTask : AsyncTask<Long, Int, Collection<Tweet>>() {
+
+        override fun onPreExecute() {
+            setRefreshLayoutVisible(true)
+        }
 
          override fun doInBackground(vararg p0: Long?): Collection<Tweet>? {
              return try {
@@ -114,12 +146,17 @@ class UserInfoActivity : AppCompatActivity() {
         }
 
         override fun onPostExecute(tweets: Collection<Tweet>) {
+            setRefreshLayoutVisible(false)
             tweetAdapter.setItems(tweets)
         }
     }
 
     @SuppressLint("StaticFieldLeak")
     private inner class UserInfoAsyncTask : AsyncTask<Long, Int, User?>() {
+
+        override fun onPreExecute() {
+            setRefreshLayoutVisible(true)
+        }
 
         override fun doInBackground(vararg p0: Long?): User? {
             return try {
@@ -135,6 +172,8 @@ class UserInfoActivity : AppCompatActivity() {
         }
 
         override fun onPostExecute(user: User?) {
+            setRefreshLayoutVisible(false)
+
             if(user != null) {
                 displayUserInfo(user)
             }

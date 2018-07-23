@@ -17,6 +17,8 @@ import android.widget.TextView
 import com.test.speransky.roman.android_twitter.network.HttpClient
 import android.os.AsyncTask
 import android.annotation.SuppressLint
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
 import android.widget.Toast
 import org.json.JSONException
 import java.io.IOException
@@ -24,6 +26,8 @@ import java.io.IOException
 
 class SearchUsersActivity : AppCompatActivity() {
     lateinit var httpClient: HttpClient
+
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var toolbar: Toolbar
     private lateinit var queryEditText: EditText
@@ -54,6 +58,11 @@ class SearchUsersActivity : AppCompatActivity() {
                 return@OnEditorActionListener true
             }
             false })
+
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+        swipeRefreshLayout.setOnRefreshListener {
+            searchUsers()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -70,6 +79,7 @@ class SearchUsersActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         usersRecyclerView = findViewById(R.id.users_recycler_view)
         usersRecyclerView.layoutManager = LinearLayoutManager(this)
+        usersRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         val onUserClickListener = object : UsersAdapter.OnUserClickListener {
             override fun onUserClick(user: User) {
@@ -96,6 +106,11 @@ class SearchUsersActivity : AppCompatActivity() {
 
     @SuppressLint("StaticFieldLeak")
     private inner class UsersAsyncTask : AsyncTask<String, Int, Collection<User>>() {
+
+        override fun onPreExecute() {
+            swipeRefreshLayout.isRefreshing = true
+
+        }
         override fun doInBackground(vararg params: String): Collection<User>? {
             val query = params[0]
             return try {
@@ -109,6 +124,8 @@ class SearchUsersActivity : AppCompatActivity() {
         }
 
         override fun onPostExecute(users: Collection<User>) {
+            swipeRefreshLayout.isRefreshing = false
+
             usersAdapter.clearItems()
             usersAdapter.setItems(users)
         }
