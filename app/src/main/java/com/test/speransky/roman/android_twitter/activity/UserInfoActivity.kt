@@ -18,7 +18,6 @@ import com.test.speransky.roman.android_twitter.network.HttpClient
 import com.test.speransky.roman.android_twitter.pojo.User
 import com.test.speransky.roman.android_twitter.pojo.Tweet
 import java.io.IOException
-import java.util.Arrays.asList
 import android.os.AsyncTask
 import android.annotation.SuppressLint
 import android.support.v4.view.ViewCompat
@@ -130,11 +129,10 @@ class UserInfoActivity : AppCompatActivity() {
             setRefreshLayoutVisible(true)
         }
 
-         override fun doInBackground(vararg p0: Long?): Collection<Tweet>? {
+        override fun doInBackground(vararg p0: Long?): Collection<Tweet>? {
              return try {
                  val userId = p0[0]
                  httpClient.readTweets(userId!!)
-
              } catch (e: IOException) {
                  e.printStackTrace()
                  null
@@ -142,7 +140,6 @@ class UserInfoActivity : AppCompatActivity() {
                  e.printStackTrace()
                  null
              }
-
         }
 
         override fun onPostExecute(tweets: Collection<Tweet>) {

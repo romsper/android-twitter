@@ -109,8 +109,8 @@ class SearchUsersActivity : AppCompatActivity() {
 
         override fun onPreExecute() {
             swipeRefreshLayout.isRefreshing = true
-
         }
+
         override fun doInBackground(vararg params: String): Collection<User>? {
             val query = params[0]
             return try {
@@ -120,7 +120,6 @@ class SearchUsersActivity : AppCompatActivity() {
             } catch (e: JSONException) {
                 null
             }
-
         }
 
         override fun onPostExecute(users: Collection<User>) {
